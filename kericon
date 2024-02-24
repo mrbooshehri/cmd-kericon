@@ -1,10 +1,16 @@
 #! /bin/bash
 
+# Variables
 ICON="/PATH/TO/assets/icon.png"
 CONFIG_HOME="/PATH/TO/Kerio-VPN/"
 
+# Check if the kerio client is already running or not
 if [[ $(ps uax | grep '/usr/sbin/kvpncsvc /var/lib/kerio-control-vpn' | grep -v grep -c) -eq 0 ]]; then
+	# Show vpn configs under $CONFIG_HOME path
 	CONFIG_FILE="$(ls $CONFIG_HOME | fzf --reverse)"
+	# Exit the program if the $CONFIG_FILE variable is empty
+	test -z $CONFIG_FILE && exit 0
+	# Check if the config file of the selected vpn is linked to /etc/kerio-kvc.conf
 	if [[ ! $(readlink -f /etc/kerio-kvc.conf) == "$CONFIG_HOME$CONFIG_FILE" ]]; then
 		sudo ln -sf "$CONFIG_HOME$CONFIG_FILE" /etc/kerio-kvc.conf
 		sudo /etc/init.d/kerio-kvc reload && \
