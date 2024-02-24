@@ -1,0 +1,12 @@
+#! /bin/bash
+
+ICON="/PATH/TO/cmd-kericon/assets/icon.png"
+
+
+if [[ $(ps uax | grep '/usr/sbin/kvpncsvc /var/lib/kerio-control-vpn' | grep -v grep -c) -eq 0 ]]; then
+	sudo /etc/init.d/kerio-kvc start && notify-send -i $ICON "Kerio Control VPN Client" "Connected successfully"
+else
+	sudo /etc/init.d/kerio-kvc stop && notify-send -i $ICON "Kerio Control VPN Client" "Disconnected form server"
+fi
+
+
