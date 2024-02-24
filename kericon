@@ -1,12 +1,14 @@
 #! /bin/bash
 
-ICON="/PATH/TO/cmd-kericon/assets/icon.png"
-CONFIG_HOME="/PARH/TO/Kerio-VPN/"
+ICON="/PATH/TO/assets/icon.png"
+CONFIG_HOME="/PATH/TO/Kerio-VPN/"
 
 if [[ $(ps uax | grep '/usr/sbin/kvpncsvc /var/lib/kerio-control-vpn' | grep -v grep -c) -eq 0 ]]; then
 	CONFIG_FILE="$(ls $CONFIG_HOME | fzf --reverse)"
 	if [[ ! $(readlink -f /etc/kerio-kvc.conf) == "$CONFIG_HOME$CONFIG_FILE" ]]; then
 		sudo ln -sf "$CONFIG_HOME$CONFIG_FILE" /etc/kerio-kvc.conf
+		sudo /etc/init.d/kerio-kvc reload && \
+		notify-send -i $ICON "Kerio Control VPN Client" "Service Reloaded due to changing config"
 	fi
 	sudo /etc/init.d/kerio-kvc start && \
 		notify-send -i $ICON "Kerio Control VPN Client" "Connected successfully"
